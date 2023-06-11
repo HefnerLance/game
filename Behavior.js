@@ -1,15 +1,16 @@
+import Entity from './entity.js';
+let entity = Entity;
 export default class Behavior {
   constructor(entity) {
     this.entity = entity;
-    console.log('Behavior constructor x,y:', this.entity.x, this.entity.y);
   }
 
   update(enemies) {
-    if (this.entity.isPrey) {
+    if (this.entity.type === 'prey') {
       // Prey behavior
       this.evadePredators(enemies);
       this.seekSafety();
-    } else if (this.entity.isPredator) {
+    } else if (this.entity.type === 'predator') {
       // Predator behavior
       this.chasePrey(enemies);
       this.capturePrey();
@@ -17,7 +18,7 @@ export default class Behavior {
   }
 
   evadePredators(enemies) {
-    let nearestPredator = this.entity.getNearestEnemy(enemies);
+    let nearestPredator = this.getNearestEnemy(enemies, 'predator');
     if (nearestPredator) {
       let dx = this.entity.x - nearestPredator.x;
       let dy = this.entity.y - nearestPredator.y;
@@ -35,7 +36,7 @@ export default class Behavior {
   }
 
   chasePrey(enemies) {
-    let nearestPrey = this.entity.getNearestEnemy(enemies);
+    let nearestPrey = this.getNearestEnemy(enemies, 'prey');
     if (nearestPrey) {
       let dx = nearestPrey.x - this.entity.x;
       let dy = nearestPrey.y - this.entity.y;
@@ -50,5 +51,34 @@ export default class Behavior {
   capturePrey() {
     // Predator behavior to capture prey
     // Check if the entity has captured prey and perform necessary actions
+  }
+
+  getNearestEnemy(enemies, type) {
+    let nearestDistance = Infinity;
+    let nearestEnemy = null;
+
+    for (let enemy of enemies) {
+      if (enemy.type === type) {
+        let distance = this.getDistance(
+          this.entity.x,
+          this.entity.y,
+          enemy.x,
+          enemy.y
+        );
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestEnemy = enemy;
+        }
+      }
+    }
+
+    return nearestEnemy;
+  }
+
+  getDistance(x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 }
