@@ -1,5 +1,7 @@
+import Behavior from './Behavior';
+
 export default class Entity {
-  constructor(game, x, y, radius, color, type = 'prey') {
+  constructor(game, x, y, radius, color, type = 'prey', behavior) {
     if (typeof x !== 'number' || isNaN(x)) {
       throw new Error('Invalid x coordinate');
     }
@@ -9,6 +11,7 @@ export default class Entity {
     if (typeof type !== 'string') {
       throw new Error('Invalid type');
     }
+
     this.game = game;
     this.x = x;
     this.y = y;
@@ -20,17 +23,10 @@ export default class Entity {
     this.detectionRadius = 100;
     this.dx = Math.random() - 0.5;
     this.dy = Math.random() - 0.5;
-    this._behavior = null; // Initialize behavior as null
+    this._behavior = behavior || new Behavior(this); // Initialize with provided behavior or create a new instance
     console.log('Entity constructor x,y:', this.x, this.y);
   }
-  get behavior() {
-    if (!this._behavior) {
-      // Lazily initialize the behavior instance
-      const Behavior = import('./Behavior.js').then((module) => module.default);
-      this._behavior = new this.behavior();
-    }
-    return this._behavior;
-  }
+
   getDistance(x1, y1, x2, y2) {
     // console.log('Distance', x1, y1, x2, y2);
     const dx = x2 - x1;
@@ -39,7 +35,7 @@ export default class Entity {
   }
 
   update(enemies) {
-    this.behavior.update(enemies);
+    this._behavior.update(enemies);
 
     // Check initial values
     // console.log(

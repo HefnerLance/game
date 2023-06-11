@@ -1,3 +1,5 @@
+import Entity from './entity.js';
+let entity = Entity;
 export default class Behavior {
   constructor(entity) {
     this.entity = entity;
