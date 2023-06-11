@@ -13,7 +13,7 @@ for (let i = 0; i < 4; i++) {
     Math.random() * 255
   })`;
   let type = i < 2 ? 'prey' : 'predator'; // first two entities are prey, others are predators
-
+  //test
   // Checking if the variables have valid values
   console.log(x, y, color, type);
 
