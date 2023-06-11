@@ -1,4 +1,3 @@
-import Behavior from './Behavior.js';
 export default class Entity {
   constructor(game, x, y, radius, color, type = 'prey') {
     if (typeof x !== 'number' || isNaN(x)) {
@@ -21,10 +20,17 @@ export default class Entity {
     this.detectionRadius = 100;
     this.dx = Math.random() - 0.5;
     this.dy = Math.random() - 0.5;
+    this._behavior = null; // Initialize behavior as null
     console.log('Entity constructor x,y:', this.x, this.y);
-    this.behavior = new Behavior(this);
   }
-
+  get behavior() {
+    if (!this._behavior) {
+      // Lazily initialize the behavior instance
+      const Behavior = import('./Behavior.js').then((module) => module.default);
+      this._behavior = new this.behavior();
+    }
+    return this._behavior;
+  }
   getDistance(x1, y1, x2, y2) {
     // console.log('Distance', x1, y1, x2, y2);
     const dx = x2 - x1;
